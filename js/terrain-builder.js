@@ -167,14 +167,42 @@ const WEAPON_PRESETS = {
   hard:{name:'بندقية قنص', dmg:42, range:30, cooldown:1000, recoil:8, auto:false, icon:'🎯'},
   legendary:{name:'سلاح أسطوري', dmg:55, range:22, cooldown:220, recoil:5, auto:true, icon:'👑'}
 };
+/* ---------------- weapon 3D model (attached to the character's hand) ---------------- */
+function makeWeaponMesh(weaponId){
+  if(!weaponId || weaponId==='fists') return null;
+  const tint = {
+    easy:0x555a63, medium:0x3a4a3a, hard:0x2a2f38, legendary:0xf59e0b
+  }[weaponId] || 0x444a52;
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({color:tint, metalness:.55, roughness:.4});
+  const isSniper = weaponId==='hard';
+  const isSmg = weaponId==='medium';
+  const barrelLen = isSniper ? 0.62 : (isSmg ? 0.32 : 0.4);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.09,0.22), bodyMat);
+  g.add(body);
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.018,barrelLen,8), bodyMat);
+  barrel.rotation.x = Math.PI/2; barrel.position.z = 0.11+barrelLen/2;
+  g.add(barrel);
+  const grip = new THREE.Mesh(new THREE.BoxGeometry(0.045,0.16,0.05), bodyMat);
+  grip.position.set(0,-0.11,-0.02); grip.rotation.x = 0.25;
+  g.add(grip);
+  if(isSniper){
+    const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.16,8), new THREE.MeshStandardMaterial({color:0x111318,metalness:.7,roughness:.3}));
+    scope.rotation.x = Math.PI/2; scope.position.set(0,0.075,0);
+    g.add(scope);
+  }
+  g.traverse(m=>{ if(m.isMesh) m.castShadow=true; });
+  g.userData.muzzleOffset = new THREE.Vector3(0,0,0.11+barrelLen);
+  return g;
+}
 function resolveWeapon(weaponId, weaponsMap){
-  if(!weaponId) return WEAPON_PRESETS.fists;
-  if(WEAPON_PRESETS[weaponId]) return WEAPON_PRESETS[weaponId];
+  if(!weaponId) return Object.assign({id:'fists'}, WEAPON_PRESETS.fists);
+  if(WEAPON_PRESETS[weaponId]) return Object.assign({id:weaponId}, WEAPON_PRESETS[weaponId]);
   if(weaponsMap && weaponsMap[weaponId]){
     const a = weaponsMap[weaponId];
-    return { name:a.name, dmg:a.dmg, range:a.range, cooldown:a.cooldown, recoil:a.recoil, auto:a.auto, icon:'🔫', parts:a.parts };
+    return { id:'easy', name:a.name, dmg:a.dmg, range:a.range, cooldown:a.cooldown, recoil:a.recoil, auto:a.auto, icon:'🔫', parts:a.parts };
   }
-  return WEAPON_PRESETS.easy;
+  return Object.assign({id:'easy'}, WEAPON_PRESETS.easy);
 }
 
-export { BIOMES, WEATHERS, WEATHER_LABELS, defaultWorldData, terrainHeightFn, buildTerrainScene, makeTreeMesh, makeRockMesh, makeBushMesh, makeMountainMesh, makeCrateMesh, makeSpawnMarker, objectMeshFactory, placeObjectsInScene, weatherParticles, updateWeatherParticles, WEAPON_PRESETS, resolveWeapon };
+export { BIOMES, WEATHERS, WEATHER_LABELS, defaultWorldData, terrainHeightFn, buildTerrainScene, makeTreeMesh, makeRockMesh, makeBushMesh, makeMountainMesh, makeCrateMesh, makeSpawnMarker, makeWeaponMesh, objectMeshFactory, placeObjectsInScene, weatherParticles, updateWeatherParticles, WEAPON_PRESETS, resolveWeapon };
