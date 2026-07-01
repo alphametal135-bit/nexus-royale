@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEXUS ROYALE</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ MAIN MENU ============ -->
+<div class="screen" id="screen-menu">
+  <canvas id="bg-particles"></canvas>
+  <div class="logo">NEXUS ROYALE</div>
+  <div class="logo-sub">CHARACTER · WORLD · BATTLE ENGINE</div>
+  <div class="menu-grid">
+    <div class="menu-card" id="card-char"><div class="ic">🧍</div><h3>محرر الشخصية</h3><p>صمم شخصيتك: الشكل، الألوان، الطول، الدرع</p></div>
+    <div class="menu-card" id="card-world"><div class="ic">🗺️</div><h3>محرر العالم</h3><p>صمم الأرض، الأشجار، الصخور، المياه، الطقس</p></div>
+    <div class="menu-card" id="card-mold"><div class="ic">🧩</div><h3>محرر القوالب</h3><p>ابنِ أشجار وصخور وجبال وصناديق وأسلحة مخصصة من قطع</p></div>
+    <div class="menu-card" id="card-play"><div class="ic">⚔️</div><h3>ابدأ اللعب</h3><p>اختبر إبداعك: تجربة حرة، ضد بوتات، أو أونلاين</p></div>
+  </div>
+  <div class="menu-status" id="menu-status">جاري تحميل البيانات المحفوظة...</div>
+</div>
+
+<!-- ============ CHARACTER EDITOR ============ -->
+<div class="screen hidden" id="screen-char">
+  <div class="topbar">
+    <div class="tb-title">🧍 محرر الشخصية</div>
+    <div class="tb-sp"></div>
+    <button class="btn btn-s btn-sm" id="char-back">→ رجوع</button>
+    <button class="btn btn-p btn-sm" id="char-save">💾 حفظ الشخصية</button>
+    <button class="btn btn-p btn-sm" id="char-next-world">التالي: محرر العالم ⬅️</button>
+  </div>
+  <div class="char-body">
+    <div class="char-panel">
+      <input class="c-name" id="c-name" placeholder="اسم الشخصية" maxlength="16" value="لاعب">
+      <div class="opt-grp">
+        <h4>لون البشرة</h4>
+        <div class="swatches" id="grp-skin"></div>
+      </div>
+      <div class="opt-grp">
+        <h4>الشعر</h4>
+        <div class="pills" id="grp-hairstyle"></div>
+        <div class="swatches" id="grp-hair" style="margin-top:8px"></div>
+      </div>
+      <div class="opt-grp">
+        <h4>الزي / الدرع</h4>
+        <div class="pills" id="grp-outfit"></div>
+        <div class="swatches" id="grp-outfitcolor" style="margin-top:8px"></div>
+      </div>
+      <div class="opt-grp">
+        <h4>الحجم</h4>
+        <div class="slider-row"><label>الطول <span id="v-height">1.0</span></label><input type="range" id="s-height" min="0.8" max="1.25" step="0.01" value="1.0"></div>
+        <div class="slider-row"><label>البنية <span id="v-build">1.0</span></label><input type="range" id="s-build" min="0.8" max="1.3" step="0.01" value="1.0"></div>
+      </div>
+      <div class="opt-grp">
+        <h4>الإحصائيات (تُشتق من الاختيارات)</h4>
+        <div class="stat-r"><span class="stat-lbl">سرعة</span><div class="stat-bg"><div class="stat-fill" id="st-speed" style="background:#00d4ff"></div></div><span class="stat-v" id="stv-speed">-</span></div>
+        <div class="stat-r"><span class="stat-lbl">درع</span><div class="stat-bg"><div class="stat-fill" id="st-armor" style="background:#7c3aed"></div></div><span class="stat-v" id="stv-armor">-</span></div>
+        <div class="stat-r"><span class="stat-lbl">صحة</span><div class="stat-bg"><div class="stat-fill" id="st-hp" style="background:#10b981"></div></div><span class="stat-v" id="stv-hp">-</span></div>
+      </div>
+      <button class="btn btn-s btn-sm" id="char-custom-body">🧩 الدولاب: صمم/عدّل شكل الجسم بالقوالب</button>
+      <button class="btn btn-s btn-sm hidden" id="char-clear-body">↩️ رجوع للشكل الافتراضي</button>
+    </div>
+    <canvas id="char-cv"></canvas>
+  </div>
+</div>
+
+<!-- ============ WORLD EDITOR ============ -->
+<div class="screen hidden" id="screen-world">
+  <div class="topbar">
+    <div class="tb-title">🗺️ محرر العالم</div>
+    <div class="tb-sp"></div>
+    <button class="btn btn-s btn-sm" id="world-back">→ رجوع</button>
+    <button class="btn btn-s btn-sm" id="world-save">💾 حفظ ونشر العالم</button>
+    <button class="btn btn-p btn-sm" id="world-save-play">🏁 حفظ الكل والانتقال لبدء اللعب</button>
+  </div>
+  <div class="world-body">
+    <div class="world-panel">
+      <input class="c-name" id="w-name" placeholder="اسم الخريطة" maxlength="18" value="خريطتي">
+      <div class="opt-grp">
+        <h4>التضاريس</h4>
+        <div class="slider-row"><label>الارتفاع (تلال) <span id="v-hills">1.2</span></label><input type="range" id="s-hills" min="0" max="4" step="0.1" value="1.2"></div>
+        <div class="slider-row"><label>مستوى المحيط/الماء <span id="v-water">-0.6</span></label><input type="range" id="s-water" min="-2" max="2" step="0.1" value="-0.6"></div>
+        <div class="pills" id="grp-biome"></div>
+      </div>
+      <div class="opt-grp">
+        <h4>أدوات الوضع (اضغط على الأرض)</h4>
+        <div class="tool-grid">
+          <button class="tool-btn on" data-tool="tree">🌳 شجرة</button>
+          <button class="tool-btn" data-tool="rock">🪨 صخرة</button>
+          <button class="tool-btn" data-tool="mountain">⛰️ جبل</button>
+          <button class="tool-btn" data-tool="bush">🌿 شجيرة</button>
+          <button class="tool-btn" data-tool="crate">📦 صندوق سلاح</button>
+          <button class="tool-btn" data-tool="spawn">🚩 نقطة ظهور</button>
+          <button class="tool-btn" data-tool="erase">🗑️ مسح عنصر</button>
+        </div>
+      </div>
+      <div class="opt-grp" id="wrap-asset-select">
+        <h4>قالب مخصص (اختياري)</h4>
+        <select id="w-asset-select"><option value="">افتراضي (مولّد تلقائي)</option></select>
+      </div>
+      <div class="opt-grp hidden" id="wrap-weapon-select">
+        <h4>السلاح داخل الصندوق</h4>
+        <select id="w-weapon-select"></select>
+      </div>
+      <div class="opt-grp">
+        <h4>الطقس</h4>
+        <div class="pills" id="grp-weather"></div>
+      </div>
+      <div class="hint-box">دبل كليك على أي نقطة بالأرض لوضع العنصر المختار. لازم تحط نقطة ظهور واحدة على الأقل قبل الحفظ.</div>
+      <div id="world-objcount" class="hint-box" style="text-align:center;font-family:'JetBrains Mono',monospace"></div>
+    </div>
+    <canvas id="world-cv"></canvas>
+  </div>
+</div>
+
+<!-- ============ MOLD / ASSET EDITOR ============ -->
+<div class="screen hidden" id="screen-mold">
+  <div class="topbar">
+    <div class="tb-title">🧩 محرر القوالب</div>
+    <div class="tb-sp"></div>
+    <button class="btn btn-s btn-sm" id="mold-back">→ رجوع</button>
+    <button class="btn btn-p btn-sm" id="mold-save">💾 حفظ القالب</button>
+  </div>
+  <div class="mold-body">
+    <div class="mold-panel">
+      <input class="c-name" id="m-name" placeholder="اسم القالب" maxlength="18" value="قالبي">
+      <div class="cat-tabs" id="mold-cats">
+        <div class="cat-tab on" data-cat="tree">🌳 شجرة</div>
+        <div class="cat-tab" data-cat="rock">🪨 صخرة</div>
+        <div class="cat-tab" data-cat="mountain">⛰️ جبل</div>
+        <div class="cat-tab" data-cat="crate">📦 صندوق</div>
+        <div class="cat-tab" data-cat="weapon">🔫 سلاح</div>
+        <div class="cat-tab" data-cat="character">🧍 جسم</div>
+      </div>
+      <div class="opt-grp">
+        <h4>أضف قطعة</h4>
+        <div class="part-grid">
+          <button class="part-btn" data-part="box">🧊 مكعب</button>
+          <button class="part-btn" data-part="sphere">⚪ كرة</button>
+          <button class="part-btn" data-part="cylinder">🛢️ أسطوانة</button>
+          <button class="part-btn" data-part="cone">🔺 مخروط</button>
+          <button class="part-btn" data-part="capsule">💊 كبسولة</button>
+          <button class="part-btn" data-part="icosahedron">🪨 صخري</button>
+        </div>
+      </div>
+      <div class="opt-grp">
+        <h4>القطع المضافة</h4>
+        <div class="part-list" id="mold-partlist"></div>
+      </div>
+      <div class="opt-grp" id="mold-transform">
+        <h4>تحريك القطعة المختارة</h4>
+        <div class="mini-slider"><label>X</label><input type="range" id="pt-x" min="-2" max="2" step="0.05" value="0"></div>
+        <div class="mini-slider"><label>Y</label><input type="range" id="pt-y" min="-1" max="3" step="0.05" value="0"></div>
+        <div class="mini-slider"><label>Z</label><input type="range" id="pt-z" min="-2" max="2" step="0.05" value="0"></div>
+        <div class="mini-slider"><label>حجم</label><input type="range" id="pt-s" min="0.1" max="2.5" step="0.05" value="0.5"></div>
+        <div class="swatches" id="pt-color" style="margin-top:6px"></div>
+      </div>
+      <div class="opt-grp hidden" id="mold-weapon-stats">
+        <h4>إحصائيات السلاح</h4>
+        <div class="wstat-row"><label>الضرر <span id="wv-dmg">20</span></label><input type="range" id="w-dmg" min="4" max="70" step="1" value="20"></div>
+        <div class="wstat-row"><label>المدى <span id="wv-range">14</span></label><input type="range" id="w-range" min="4" max="30" step="1" value="14"></div>
+        <div class="wstat-row"><label>سرعة الإطلاق (كولداون مللي) <span id="wv-cd">350</span></label><input type="range" id="w-cd" min="80" max="1200" step="10" value="350"></div>
+        <div class="wstat-row"><label>الارتداد (Recoil) <span id="wv-recoil">3</span></label><input type="range" id="w-recoil" min="0" max="10" step="1" value="3"></div>
+        <div class="pills" id="grp-firemode"></div>
+      </div>
+    </div>
+    <canvas id="mold-cv"></canvas>
+  </div>
+</div>
+
+<!-- ============ PLAY SETUP ============ -->
+<div class="screen hidden" id="screen-play">
+  <div class="play-panel">
+    <h2>⚔️ ابدأ اللعب</h2>
+    <div class="select-row">
+      <label>الشخصية</label>
+      <select id="p-char"></select>
+    </div>
+    <div class="select-row">
+      <label>الخريطة</label>
+      <select id="p-world"></select>
+    </div>
+    <div class="mode-tabs">
+      <div class="mode-tab on" data-mode="solo">🧪 تجربة حرة</div>
+      <div class="mode-tab" data-mode="bots">🤖 ضد بوتات</div>
+      <div class="mode-tab" data-mode="online">🌐 أونلاين مع صديق</div>
+    </div>
+    <div id="bots-opts" class="select-row hidden">
+      <label>عدد البوتات</label>
+      <select id="p-botcount"><option>2</option><option selected>4</option><option>6</option><option>8</option></select>
+    </div>
+    <div id="online-opts" class="select-row hidden">
+      <label>كود الغرفة (شارك نفس الكود مع صديقك)</label>
+      <input class="txt-input" id="p-roomcode" placeholder="اتركه فاضي لإنشاء كود جديد" maxlength="6" style="text-transform:uppercase">
+      <div class="hint-box">أول واحد يدخل بالكود يبقى مضيف الغرفة والخريطة اللي يختارها هي اللي هتتلعب. المزامنة كل ثانية تقريبًا عبر التخزين السحابي — مش لحظية 100% لكنها شغالة فعليًا بين جهازين مختلفين.</div>
+    </div>
+    <button class="btn btn-p" id="play-start" style="padding:13px;">🚀 ابدأ</button>
+    <button class="btn btn-s btn-sm" id="play-back">→ رجوع للقائمة</button>
+  </div>
+</div>
+
+<!-- ============ IN-GAME ============ -->
+<div class="screen hidden" id="screen-game">
+  <canvas id="game-cv"></canvas>
+  <div class="vignette"></div>
+  <button class="btn btn-r btn-sm hud" id="exitBtn" style="pointer-events:auto;">✕ خروج</button>
+  <div class="hud" id="hpPanel">
+    <div id="hpName">اللاعب</div>
+    <div class="hpBarBg"><div class="hpBarFill" id="hpBarFill" style="width:100%"></div></div>
+    <div id="hpNum">100/100</div>
+    <div id="weaponLine">🖐️ بدون سلاح</div>
+  </div>
+  <div class="hud" id="killFeed"></div>
+  <div class="hud" id="playersLeft">اللاعبون: --</div>
+  <div class="hud" id="joyZone"><div id="joyBase"></div><div id="joyKnob"></div></div>
+  <button class="hud" id="jumpBtn">قفز</button>
+  <button class="hud" id="adsBtn">🎯<br>تصويب</button>
+  <button class="hud" id="fireBtn">🔫<br>إطلاق</button>
+  <div id="crosshair"></div>
+  <div id="hitMarker">✕</div>
+</div>
+
+<!-- overlays -->
+<div class="overlay hidden" id="overlay-death">
+  <div class="card"><h2 id="death-title">لقد أُقصيت</h2><p id="death-sub">حاول مرة أخرى وحسّن استراتيجيتك.</p>
+    <button class="btn btn-p" id="death-exit" style="width:100%">رجوع للقائمة</button></div>
+</div>
+<div class="overlay hidden" id="overlay-win">
+  <div class="card"><h2 style="color:var(--green)">🏆 فزت بالجولة!</h2><p id="win-sub"></p>
+    <button class="btn btn-p" id="win-exit" style="width:100%">رجوع للقائمة</button></div>
+</div>
+<div class="notif" id="notif"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module" src="js/boot.js"></script>
+</body>
+</html>
